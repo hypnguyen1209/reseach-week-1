@@ -1,0 +1,39 @@
+version: '3.9'
+
+networks:
+  research-1:
+
+
+services:
+  wordpress:
+    build: ./wordpress
+    container_name: wordpress
+    depends_on:
+      - db
+    volumes:
+      - ./wordpress/src:/var/www/html
+    ports:
+      - "1234:80"
+    networks:
+      - research-1
+  db:
+    image: mariadb:10.8.2
+    container_name: db
+    command:
+      [
+        mysqld,
+        --character-set-server=utf8,
+        --collation-server=utf8_general_ci,
+        --wait_timeout=28800,
+        --log-warnings=0
+      ]
+    volumes:
+      - ./data:/var/lib/mysql
+      #- ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=Vcs@123
+      - MYSQL_USER=vcs
+      - MYSQL_PASSWORD=Vcs@123
+      - MYSQL_DATABASE=research-1
+    networks:
+      - research-1
